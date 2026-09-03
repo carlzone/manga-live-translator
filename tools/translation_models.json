@@ -1,0 +1,26 @@
+{
+  "runtime": {
+    "name": "CTranslate2",
+    "compute_type": "int8",
+    "device": "cpu",
+    "license": "MIT"
+  },
+  "models": [
+    {
+      "language": "ja",
+      "source": "Helsinki-NLP/opus-mt-ja-en",
+      "revision": "0770961",
+      "upstream_license": "Apache-2.0 model card; retain upstream attribution",
+      "output": "models/translation/ja-en"
+    },
+    {
+      "language": "zh",
+      "source": "Helsinki-NLP/opus-mt-zh-en",
+      "revision": "cf10909",
+      "upstream_license": "CC-BY-4.0",
+      "output": "models/translation/zh-en"
+    }
+  ],
+  "required_output_files": ["model.bin", "config.json", "source.spm", "target.spm"],
+  "note": "Run tools/verify_translation_models.py after conversion to record SHA-256 hashes."
+}

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="160" viewBox="0 0 960 160">
+  <style>text { font-family: "Noto Sans JP"; }</style>
+  <rect width="960" height="160" fill="#172033"/>
+  <path d="M0 36 L960 16" stroke="#26344f" stroke-width="18" opacity=".55"/>
+  <text x="480" y="106" text-anchor="middle" font-family="Noto Sans CJK JP, Microsoft JhengHei, Microsoft YaHei, sans-serif" font-size="40" font-weight="600" fill="#ffffff" stroke="#000000" stroke-width="1" paint-order="stroke">時間がありません</text>
+</svg>

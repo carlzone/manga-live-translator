@@ -1,0 +1,335 @@
+{
+  "license": "CC0-1.0; project-created synthetic subtitle fixtures",
+  "fixtures": [
+    {
+      "file": "ja_01.svg",
+      "language": "ja",
+      "expected": "夜明けまで待ってください",
+      "style": {
+        "dark": true,
+        "two_line": true,
+        "outlined": true,
+        "scaled": true
+      }
+    },
+    {
+      "file": "ja_02.svg",
+      "language": "ja",
+      "expected": "本当にありがとう",
+      "style": {
+        "dark": false,
+        "two_line": false,
+        "outlined": false,
+        "scaled": false
+      }
+    },
+    {
+      "file": "ja_03.svg",
+      "language": "ja",
+      "expected": "次の駅で降ります",
+      "style": {
+        "dark": true,
+        "two_line": false,
+        "outlined": false,
+        "scaled": false
+      }
+    },
+    {
+      "file": "ja_04.svg",
+      "language": "ja",
+      "expected": "これは秘密の作戦だ",
+      "style": {
+        "dark": false,
+        "two_line": false,
+        "outlined": false,
+        "scaled": true
+      }
+    },
+    {
+      "file": "ja_05.svg",
+      "language": "ja",
+      "expected": "もう一度やってみよう",
+      "style": {
+        "dark": true,
+        "two_line": false,
+        "outlined": true,
+        "scaled": false
+      }
+    },
+    {
+      "file": "ja_06.svg",
+      "language": "ja",
+      "expected": "心配しないでください",
+      "style": {
+        "dark": false,
+        "two_line": true,
+        "outlined": false,
+        "scaled": false
+      }
+    },
+    {
+      "file": "ja_07.svg",
+      "language": "ja",
+      "expected": "時間がありません",
+      "style": {
+        "dark": true,
+        "two_line": false,
+        "outlined": false,
+        "scaled": true
+      }
+    },
+    {
+      "file": "ja_08.svg",
+      "language": "ja",
+      "expected": "新しい世界へようこそ",
+      "style": {
+        "dark": false,
+        "two_line": false,
+        "outlined": false,
+        "scaled": false
+      }
+    },
+    {
+      "file": "ja_09.svg",
+      "language": "ja",
+      "expected": "準備はできましたか",
+      "style": {
+        "dark": true,
+        "two_line": false,
+        "outlined": true,
+        "scaled": false
+      }
+    },
+    {
+      "file": "ja_10.svg",
+      "language": "ja",
+      "expected": "雨が静かに降っている",
+      "style": {
+        "dark": false,
+        "two_line": false,
+        "outlined": false,
+        "scaled": true
+      }
+    },
+    {
+      "file": "zh_cn_11.svg",
+      "language": "zh-CN",
+      "expected": "请等到天亮",
+      "style": {
+        "dark": true,
+        "two_line": true,
+        "outlined": false,
+        "scaled": false
+      }
+    },
+    {
+      "file": "zh_cn_12.svg",
+      "language": "zh-CN",
+      "expected": "真的非常感谢你",
+      "style": {
+        "dark": false,
+        "two_line": false,
+        "outlined": false,
+        "scaled": false
+      }
+    },
+    {
+      "file": "zh_cn_13.svg",
+      "language": "zh-CN",
+      "expected": "我们在下一站下车",
+      "style": {
+        "dark": true,
+        "two_line": false,
+        "outlined": true,
+        "scaled": true
+      }
+    },
+    {
+      "file": "zh_cn_14.svg",
+      "language": "zh-CN",
+      "expected": "这是一个秘密计划",
+      "style": {
+        "dark": false,
+        "two_line": false,
+        "outlined": false,
+        "scaled": false
+      }
+    },
+    {
+      "file": "zh_cn_15.svg",
+      "language": "zh-CN",
+      "expected": "让我们再试一次",
+      "style": {
+        "dark": true,
+        "two_line": false,
+        "outlined": false,
+        "scaled": false
+      }
+    },
+    {
+      "file": "zh_cn_16.svg",
+      "language": "zh-CN",
+      "expected": "请不要担心",
+      "style": {
+        "dark": false,
+        "two_line": true,
+        "outlined": false,
+        "scaled": true
+      }
+    },
+    {
+      "file": "zh_cn_17.svg",
+      "language": "zh-CN",
+      "expected": "已经没有时间了",
+      "style": {
+        "dark": true,
+        "two_line": false,
+        "outlined": true,
+        "scaled": false
+      }
+    },
+    {
+      "file": "zh_cn_18.svg",
+      "language": "zh-CN",
+      "expected": "欢迎来到新世界",
+      "style": {
+        "dark": false,
+        "two_line": false,
+        "outlined": false,
+        "scaled": false
+      }
+    },
+    {
+      "file": "zh_cn_19.svg",
+      "language": "zh-CN",
+      "expected": "你准备好了吗",
+      "style": {
+        "dark": true,
+        "two_line": false,
+        "outlined": false,
+        "scaled": true
+      }
+    },
+    {
+      "file": "zh_cn_20.svg",
+      "language": "zh-CN",
+      "expected": "外面正在下雨",
+      "style": {
+        "dark": false,
+        "two_line": false,
+        "outlined": false,
+        "scaled": false
+      }
+    },
+    {
+      "file": "zh_tw_21.svg",
+      "language": "zh-TW",
+      "expected": "請等到天亮",
+      "style": {
+        "dark": true,
+        "two_line": true,
+        "outlined": true,
+        "scaled": false
+      }
+    },
+    {
+      "file": "zh_tw_22.svg",
+      "language": "zh-TW",
+      "expected": "真的非常感謝你",
+      "style": {
+        "dark": false,
+        "two_line": false,
+        "outlined": false,
+        "scaled": true
+      }
+    },
+    {
+      "file": "zh_tw_23.svg",
+      "language": "zh-TW",
+      "expected": "我們在下一站下車",
+      "style": {
+        "dark": true,
+        "two_line": false,
+        "outlined": false,
+        "scaled": false
+      }
+    },
+    {
+      "file": "zh_tw_24.svg",
+      "language": "zh-TW",
+      "expected": "這是一個祕密計畫",
+      "style": {
+        "dark": false,
+        "two_line": false,
+        "outlined": false,
+        "scaled": false
+      }
+    },
+    {
+      "file": "zh_tw_25.svg",
+      "language": "zh-TW",
+      "expected": "讓我們再試一次",
+      "style": {
+        "dark": true,
+        "two_line": false,
+        "outlined": true,
+        "scaled": true
+      }
+    },
+    {
+      "file": "zh_tw_26.svg",
+      "language": "zh-TW",
+      "expected": "請不要擔心",
+      "style": {
+        "dark": false,
+        "two_line": true,
+        "outlined": false,
+        "scaled": false
+      }
+    },
+    {
+      "file": "zh_tw_27.svg",
+      "language": "zh-TW",
+      "expected": "已經沒有時間了",
+      "style": {
+        "dark": true,
+        "two_line": false,
+        "outlined": false,
+        "scaled": false
+      }
+    },
+    {
+      "file": "zh_tw_28.svg",
+      "language": "zh-TW",
+      "expected": "歡迎來到新世界",
+      "style": {
+        "dark": false,
+        "two_line": false,
+        "outlined": false,
+        "scaled": true
+      }
+    },
+    {
+      "file": "zh_tw_29.svg",
+      "language": "zh-TW",
+      "expected": "你準備好了嗎",
+      "style": {
+        "dark": true,
+        "two_line": false,
+        "outlined": true,
+        "scaled": false
+      }
+    },
+    {
+      "file": "zh_tw_30.svg",
+      "language": "zh-TW",
+      "expected": "外面正在下雨",
+      "style": {
+        "dark": false,
+        "two_line": false,
+        "outlined": false,
+        "scaled": false
+      }
+    }
+  ]
+}

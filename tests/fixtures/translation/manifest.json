@@ -1,0 +1,14 @@
+{
+  "license": "CC0-1.0; project-created reference translations reviewed for H3",
+  "fixtures": [
+    {"language": "ja", "source": "夜明けまで待ってください", "expected": "Please wait until dawn."},
+    {"language": "ja", "source": "本当にありがとう", "expected": "Thank you very much."},
+    {"language": "ja", "source": "次の駅で降ります", "expected": "I will get off at the next station."},
+    {"language": "zh-CN", "source": "请等到天亮", "expected": "Please wait until dawn."},
+    {"language": "zh-CN", "source": "真的非常感谢你", "expected": "Thank you very much."},
+    {"language": "zh-CN", "source": "我们在下一站下车", "expected": "We will get off at the next station."},
+    {"language": "zh-TW", "source": "請不要擔心", "expected": "Please do not worry."},
+    {"language": "zh-TW", "source": "已經沒有時間了", "expected": "There is no time left."},
+    {"language": "zh-TW", "source": "歡迎來到新世界", "expected": "Welcome to the new world."}
+  ]
+}
