@@ -18,6 +18,7 @@ from manga_live_translator.ocr.processing import (
     comparison_key,
     normalize_ocr_text,
     order_blocks,
+    select_horizontal_manga_blocks,
 )
 from manga_live_translator.screen import CapturedFrame
 from manga_live_translator.workers import OcrWorker
@@ -54,6 +55,20 @@ def test_manga_order_preserves_every_block_top_to_bottom() -> None:
     top = OcrTextBlock("menu", 0.99, ((0, 0), (20, 0), (20, 10), (0, 10)))
     lower = OcrTextBlock("å­—å¹•", 0.95, ((20, 70), (80, 70), (80, 85), (20, 85)))
     assert order_blocks((lower, top)) == (top, lower)
+
+
+def test_horizontal_manga_filter_normalizes_orders_and_preserves_boxes() -> None:
+    top_box = ((20, 5), (80, 5), (80, 15), (20, 15))
+    lower_box = ((0, 50), (30, 50), (30, 60), (0, 60))
+    blocks = (
+        OcrTextBlock(" lower ", 0.9, lower_box),
+        OcrTextBlock("vertical", 0.99, ((0, 0), (5, 0), (5, 30), (0, 30))),
+        OcrTextBlock("top", 0.8, top_box),
+        OcrTextBlock("low confidence", 0.7, lower_box),
+    )
+    selected = select_horizontal_manga_blocks(blocks)
+    assert [block.text for block in selected] == ["top", "lower"]
+    assert selected[0].box is top_box
 
 
 def test_stabilizer_filters_commits_and_deduplicates() -> None:
@@ -97,8 +112,8 @@ def test_rapidocr_loads_explicit_assets_and_maps_output(
         txts = ("menu", "å­—å¹•")
         scores = (0.99, 0.95)
         boxes = (
-            ((0, 0), (4, 0), (4, 10), (0, 10)),
-            ((0, 80), (4, 80), (4, 90), (0, 90)),
+            ((0, 0), (40, 0), (40, 10), (0, 10)),
+            ((0, 80), (40, 80), (40, 90), (0, 90)),
         )
 
     class FakeRapidOcr:
@@ -116,7 +131,7 @@ def test_rapidocr_loads_explicit_assets_and_maps_output(
     engine.load()
     recognized = engine.recognize(frame())
     assert constructed[0]["Det.model_path"] == str(tmp_path / "PP-OCRv6_det_small.onnx")
-    assert recognized.text.splitlines() == ["menu", Output.txts[1]]
+    assert recognized.text.splitlines() == ["menu", normalize_ocr_text(Output.txts[1])]
     assert recognized.confidence == 0.95
     engine.close()
     with pytest.raises(OcrError, match="not loaded"):

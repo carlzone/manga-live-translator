@@ -156,8 +156,9 @@ class WindowsGdiCaptureProvider:  # pragma: no cover - native Windows integratio
 
 
 class RegionCaptureWorker(QThread):
-    """Capture at a bounded rate and publish only materially changed frames."""
+    """Capture at a bounded rate and publish every sample plus material changes."""
 
+    frame_sampled = Signal(object)
     frame_changed = Signal(object)
     frame_available = Signal()
     status_changed = Signal(object, object)
@@ -181,13 +182,19 @@ class RegionCaptureWorker(QThread):
         self.frames_per_second = frames_per_second
         self.frames = LatestFrameQueue()
         self.detector = FrameChangeDetector(change_threshold)
+        self._wake = threading.Event()
 
     def start_capture(self) -> None:
         if self.isRunning():
             return
         self.detector.reset()
         self.frames.clear()
+        self._wake.clear()
         self.start()
+
+    def request_capture(self) -> None:
+        """Wake the producer so the next sample is captured without interval delay."""
+        self._wake.set()
 
     def run(self) -> None:
         interval = 1 / self.frames_per_second
@@ -196,19 +203,22 @@ class RegionCaptureWorker(QThread):
             while not self.isInterruptionRequested():
                 started = time.monotonic()
                 frame = self.provider.capture(self.region, self.screen)
+                self.frames.put(frame)
+                self.frame_sampled.emit(frame)
                 if self.detector.changed(frame):
-                    self.frames.put(frame)
                     self.frame_changed.emit(frame)
-                    self.frame_available.emit()
+                self.frame_available.emit()
                 remaining = interval - (time.monotonic() - started)
                 if remaining > 0:
-                    self.msleep(round(remaining * 1000))
+                    self._wake.wait(remaining)
+                    self._wake.clear()
         except (OSError, RuntimeError, ValueError) as exc:
             self.error.emit(str(exc))
             self.status_changed.emit(RuntimeStatus.ERROR, str(exc))
 
     def stop_capture(self) -> None:
         self.requestInterruption()
+        self._wake.set()
         if self.isRunning() and not self.wait(3000):
             self.error.emit("Region capture did not stop within three seconds")
         self.frames.clear()

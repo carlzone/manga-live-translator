@@ -15,7 +15,7 @@ from manga_live_translator.text_translation.engine import (
 
 MODEL_DIRECTORIES = {
     SourceLanguage.JAPANESE: "ja-en",
-    SourceLanguage.CHINESE: "zh-en",
+    SourceLanguage.SIMPLIFIED_CHINESE: "zh-en",
 }
 REQUIRED_MODEL_FILES = ("model.bin", "config.json", "source.spm", "target.spm")
 
@@ -28,7 +28,7 @@ def resolve_source_language(text: str, requested: SourceLanguage) -> SourceLangu
     if any("\u3040" <= character <= "\u30ff" for character in text):
         return SourceLanguage.JAPANESE
     if any("\u3400" <= character <= "\u9fff" for character in text):
-        return SourceLanguage.CHINESE
+        return SourceLanguage.SIMPLIFIED_CHINESE
     raise TextTranslationError("Could not detect Japanese or Chinese text in the caption")
 
 
@@ -90,21 +90,26 @@ class CTranslate2TextEngine:
         if target_language != "en":
             raise TextTranslationError("Only English text translation is supported")
         language = resolve_source_language(caption, source_language)
+        model_language = (
+            SourceLanguage.SIMPLIFIED_CHINESE
+            if language is SourceLanguage.TRADITIONAL_CHINESE
+            else language
+        )
         if not self._translators:
             raise TextTranslationError("Text translation engine is not loaded")
         started = time.perf_counter()
         try:
-            tokens = self._source_tokenizers[language].encode(caption, out_type=str)
+            tokens = self._source_tokenizers[model_language].encode(caption, out_type=str)
             # Marian tokenizers append EOS to every encoder input. CTranslate2's
             # converted model does not add it automatically (add_source_eos=false).
             tokens.append("</s>")
-            batches = self._translators[language].translate_batch(
+            batches = self._translators[model_language].translate_batch(
                 [tokens], beam_size=4, max_decoding_length=128
             )
             hypotheses = batches[0].hypotheses if batches else []
             if not hypotheses:
                 raise ValueError("model returned no translation")
-            translated = self._target_tokenizers[language].decode(hypotheses[0]).strip()
+            translated = self._target_tokenizers[model_language].decode(hypotheses[0]).strip()
             if not translated:
                 raise ValueError("model returned an empty translation")
         except Exception as exc:

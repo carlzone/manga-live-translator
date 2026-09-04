@@ -34,10 +34,11 @@ def test_source_language_routing() -> None:
     )
     assert (
         resolve_source_language("\u7e41\u9ad4\u4e2d\u6587", SourceLanguage.AUTO)
-        is SourceLanguage.CHINESE
+        is SourceLanguage.SIMPLIFIED_CHINESE
     )
     assert (
-        resolve_source_language("\u65e5\u672c\u8a9e", SourceLanguage.AUTO) is SourceLanguage.CHINESE
+        resolve_source_language("\u65e5\u672c\u8a9e", SourceLanguage.AUTO)
+        is SourceLanguage.SIMPLIFIED_CHINESE
     )
     assert (
         resolve_source_language("\u65e5\u672c\u8a9e", SourceLanguage.JAPANESE)
@@ -90,14 +91,14 @@ def test_engine_loads_translates_and_closes(
     )
     engine = CTranslate2TextEngine(tmp_path)
     engine.load()
-    result = engine.translate("å­—å¹•", SourceLanguage.CHINESE)
+    result = engine.translate("å­—å¹•", SourceLanguage.TRADITIONAL_CHINESE)
     assert result.text == "English caption"
-    assert result.source_language is SourceLanguage.CHINESE
+    assert result.source_language is SourceLanguage.TRADITIONAL_CHINESE
     assert len(translators) == 2
     engine.close()
     engine.close()
     with pytest.raises(TextTranslationError, match="not loaded"):
-        engine.translate("å­—å¹•", SourceLanguage.CHINESE)
+        engine.translate("å­—å¹•", SourceLanguage.SIMPLIFIED_CHINESE)
 
 
 class FakeEngine:
@@ -147,6 +148,6 @@ def test_worker_is_bounded_emits_and_closes(qt_app: object) -> None:
 
 
 def test_worker_ignores_empty_input() -> None:
-    worker = TextTranslationWorker(FakeEngine(), SourceLanguage.CHINESE)
+    worker = TextTranslationWorker(FakeEngine(), SourceLanguage.SIMPLIFIED_CHINESE)
     assert not worker.submit("   ")
     assert worker.queue_depth == 0

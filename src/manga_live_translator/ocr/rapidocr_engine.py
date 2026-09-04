@@ -8,8 +8,13 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
-from manga_live_translator.ocr.engine import OcrError, OcrResult, OcrTextBlock
-from manga_live_translator.ocr.processing import normalize_ocr_text, order_blocks
+from manga_live_translator.config import ReadingDirection, SourceLanguage
+from manga_live_translator.ocr.engine import BlockOrientation, OcrError, OcrResult, OcrTextBlock
+from manga_live_translator.ocr.processing import (
+    classify_orientation,
+    normalize_ocr_text,
+    process_manga_layout,
+)
 from manga_live_translator.paths import runtime_path
 
 if TYPE_CHECKING:
@@ -22,9 +27,22 @@ ORIENTATION_MODEL = "ch_ppocr_mobile_v2.0_cls_mobile.onnx"
 
 
 class RapidOcrEngine:
-    def __init__(self, model_dir: Path | None = None, *, use_orientation: bool = False) -> None:
+    def __init__(
+        self,
+        model_dir: Path | None = None,
+        *,
+        use_orientation: bool = False,
+        reading_direction: ReadingDirection = ReadingDirection.WEBTOON_LTR,
+        source_language: SourceLanguage = SourceLanguage.AUTO,
+        experimental_vertical_ocr: bool = False,
+    ) -> None:
         self.model_dir = model_dir or runtime_path("models", "ocr")
         self.use_orientation = use_orientation
+        self.reading_direction = ReadingDirection(reading_direction)
+        self.source_language = SourceLanguage(source_language)
+        # PP-OCR's shared CJK recognizer can retry vertical Japanese and Chinese crops.
+        # The source-language selection controls translation routing, not OCR orientation.
+        self.experimental_vertical_ocr = experimental_vertical_ocr
         self._engine: Any | None = None
 
     def _required_assets(self) -> tuple[Path, ...]:
@@ -74,8 +92,9 @@ class RapidOcrEngine:
         if self._engine is None:
             raise OcrError("OCR engine is not loaded")
         started = time.perf_counter()
+        image = self.frame_to_bgr(frame)
         try:
-            output = self._engine(self.frame_to_bgr(frame), use_cls=self.use_orientation)
+            output = self._engine(image, use_cls=self.use_orientation)
             output_texts = getattr(output, "txts", None)
             output_scores = getattr(output, "scores", None)
             output_boxes = getattr(output, "boxes", None)
@@ -89,12 +108,20 @@ class RapidOcrEngine:
             points = tuple((float(point[0]), float(point[1])) for point in box)
             if len(points) != 4:
                 continue
-            blocks.append(OcrTextBlock(str(text), float(score), points))
-        filtered = tuple(
-            block
-            for block in order_blocks(tuple(blocks))
-            if block.confidence >= 0.75 and block.text.strip()
+            block = OcrTextBlock(str(text), float(score), points)
+            if (
+                self.experimental_vertical_ocr
+                and classify_orientation(block) is BlockOrientation.VERTICAL
+            ):
+                block = self._recognize_vertical_candidate(image, block)
+            blocks.append(block)
+        layout = process_manga_layout(
+            tuple(blocks),
+            reading_direction=self.reading_direction,
+            language=self.source_language,
+            allow_vertical=self.experimental_vertical_ocr,
         )
+        filtered = layout.blocks
         text = "\n".join(block.text.strip() for block in filtered)
         confidence = min((block.confidence for block in filtered), default=0.0)
         return OcrResult(
@@ -104,6 +131,53 @@ class RapidOcrEngine:
             confidence,
             frame.captured_at,
             time.perf_counter() - started,
+            layout.reading_direction,
+        )
+
+    @staticmethod
+    def _useful_characters(text: str) -> int:
+        return sum((not char.isspace()) and (not char.isascii() or char.isalnum()) for char in text)
+
+    def _recognize_vertical_candidate(
+        self,
+        image: np.ndarray[tuple[int, ...], np.dtype[np.uint8]],
+        original: OcrTextBlock,
+    ) -> OcrTextBlock:
+        """Try both crop rotations, retaining original viewport geometry on success."""
+        if self._engine is None:
+            return original
+        xs = [point[0] for point in original.box]
+        ys = [point[1] for point in original.box]
+        padding = max(2, round(min(max(xs) - min(xs), max(ys) - min(ys)) * 0.08))
+        left = max(0, int(min(xs)) - padding)
+        top = max(0, int(min(ys)) - padding)
+        right = min(image.shape[1], int(max(xs) + 0.999) + padding)
+        bottom = min(image.shape[0], int(max(ys) + 0.999) + padding)
+        crop = image[top:bottom, left:right]
+        candidates = [(normalize_ocr_text(original.text), original.confidence)]
+        if crop.size:
+            for turns in (1, 3):
+                try:
+                    output = self._engine(
+                        np.ascontiguousarray(np.rot90(crop, turns)), use_cls=False
+                    )
+                    texts = getattr(output, "txts", None) or ()
+                    scores = getattr(output, "scores", None) or ()
+                    text = normalize_ocr_text("".join(str(item) for item in texts))
+                    if text and scores:
+                        candidates.append((text, min(float(score) for score in scores)))
+                except Exception:
+                    continue
+        text, confidence = max(
+            candidates,
+            key=lambda item: (item[1], self._useful_characters(item[0])),
+        )
+        return OcrTextBlock(
+            text,
+            confidence,
+            original.box,
+            BlockOrientation.VERTICAL,
+            original.fragment_boxes,
         )
 
     def close(self) -> None:

@@ -1,0 +1,69 @@
+{
+  "license": "project-created; CC0-1.0",
+  "fixtures": [
+    {
+      "name": "japanese-rtl-columns",
+      "language": "ja",
+      "mode": "manga_rtl",
+      "blocks": [
+        {"text": "右上", "confidence": 0.95, "box": [70, 10, 95, 22]},
+        {"text": "右下", "confidence": 0.95, "box": [70, 50, 95, 62]},
+        {"text": "左上", "confidence": 0.95, "box": [10, 10, 35, 22]}
+      ],
+      "expected": ["右上", "右下", "左上"]
+    },
+    {
+      "name": "webtoon-rows",
+      "language": "zh-Hans",
+      "mode": "webtoon_ltr",
+      "blocks": [
+        {"text": "下方", "confidence": 0.96, "box": [50, 60, 85, 72]},
+        {"text": "上方", "confidence": 0.96, "box": [10, 10, 45, 22]}
+      ],
+      "expected": ["上方", "下方"]
+    },
+    {
+      "name": "fragmented-bubble",
+      "language": "ja",
+      "mode": "webtoon_ltr",
+      "blocks": [
+        {"text": "こん", "confidence": 0.94, "box": [10, 10, 45, 20]},
+        {"text": "にちは", "confidence": 0.92, "box": [12, 23, 47, 33]},
+        {"text": "別", "confidence": 0.95, "box": [75, 70, 90, 80]}
+      ],
+      "expected": ["こんにちは", "別"]
+    },
+    {
+      "name": "repeated-dialogue-separate",
+      "language": "ja",
+      "mode": "webtoon_ltr",
+      "blocks": [
+        {"text": "はい", "confidence": 0.95, "box": [5, 5, 25, 15]},
+        {"text": "はい", "confidence": 0.95, "box": [70, 70, 90, 80]}
+      ],
+      "expected": ["はい", "はい"]
+    },
+    {
+      "name": "mixed-orientation",
+      "language": "ja",
+      "mode": "manga_rtl",
+      "allow_vertical": true,
+      "blocks": [
+        {"text": "縦書き", "confidence": 0.95, "box": [75, 5, 85, 55]},
+        {"text": "横書き", "confidence": 0.95, "box": [10, 10, 45, 20]}
+      ],
+      "expected": ["縦書き", "横書き"]
+    },
+    {
+      "name": "automatic-japanese-columns",
+      "language": "ja",
+      "mode": "automatic",
+      "expected_mode": "manga_rtl",
+      "blocks": [
+        {"text": "右", "confidence": 0.95, "box": [70, 10, 90, 20]},
+        {"text": "左", "confidence": 0.95, "box": [10, 10, 30, 20]}
+      ],
+      "expected": ["右", "左"]
+    }
+  ]
+}

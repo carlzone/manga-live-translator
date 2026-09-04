@@ -15,14 +15,22 @@ from manga_live_translator.paths import settings_path
 
 class SourceLanguage(StrEnum):
     JAPANESE = "ja"
-    CHINESE = "zh"
+    SIMPLIFIED_CHINESE = "zh-Hans"
+    TRADITIONAL_CHINESE = "zh-Hant"
     AUTO = "auto"
+
+
+class ReadingDirection(StrEnum):
+    AUTOMATIC = "automatic"
+    MANGA_RTL = "manga_rtl"
+    WEBTOON_LTR = "webtoon_ltr"
 
 
 class PanelPosition(StrEnum):
     LEFT = "left"
     RIGHT = "right"
     BOTTOM = "bottom"
+    FLOATING = "floating"
 
 
 @dataclass(frozen=True, slots=True)
@@ -73,8 +81,10 @@ class AppSettings:
     panel_position: PanelPosition = PanelPosition.RIGHT
     font_size: int = 18
     overlay_opacity: float = 0.9
-    show_original_text: bool = True
-    click_through: bool = False
+    show_original_text: bool = False
+    click_through: bool = True
+    reading_direction: ReadingDirection = ReadingDirection.AUTOMATIC
+    experimental_vertical_ocr: bool = False
 
     def __post_init__(self) -> None:
         if self.target_language != "en":
@@ -92,17 +102,28 @@ class AppSettings:
         defaults = cls()
         region = CaptionRegion.from_dict(raw.get("caption_region"))
         try:
-            language = SourceLanguage(raw.get("source_language", defaults.source_language))
+            language_value = raw.get("source_language", defaults.source_language)
+            # Phase 0 stored a single generic Chinese choice. Keep those settings readable.
+            if language_value == "zh":
+                language_value = SourceLanguage.SIMPLIFIED_CHINESE
+            language = SourceLanguage(language_value)
         except (TypeError, ValueError):
             language = defaults.source_language
         try:
             position = PanelPosition(raw.get("panel_position", defaults.panel_position))
         except (TypeError, ValueError):
             position = defaults.panel_position
+        try:
+            reading_direction = ReadingDirection(
+                raw.get("reading_direction", defaults.reading_direction)
+            )
+        except (TypeError, ValueError):
+            reading_direction = defaults.reading_direction
         font_size = raw.get("font_size", defaults.font_size)
         opacity = raw.get("overlay_opacity", defaults.overlay_opacity)
         show_original = raw.get("show_original_text")
         click_through = raw.get("click_through")
+        vertical_ocr = raw.get("experimental_vertical_ocr")
         return cls(
             caption_region=region,
             source_language=language,
@@ -119,6 +140,10 @@ class AppSettings:
             click_through=click_through
             if isinstance(click_through, bool)
             else defaults.click_through,
+            reading_direction=reading_direction,
+            experimental_vertical_ocr=vertical_ocr
+            if isinstance(vertical_ocr, bool)
+            else defaults.experimental_vertical_ocr,
         )
 
 
