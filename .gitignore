@@ -16,6 +16,7 @@ htmlcov/
 build/
 dist/
 .pyinstaller/
+installer/Output/
 *.egg-info/
 *.log
 models/**/*.onnx

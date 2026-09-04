@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MODEL_SUFFIXES = {".onnx", ".bin", ".spm"}
 REQUIRED_DOCUMENTS = (
     "README.md",
+    "HOW_TO_INSTALL.md",
     "RELEASE_NOTES.md",
     "PRIVACY.md",
     "THIRD_PARTY_NOTICES.md",
@@ -57,4 +58,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

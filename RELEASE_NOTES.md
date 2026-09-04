@@ -1,35 +1,56 @@
-# MangaLiveTranslator 0.1.0 — Phase 4
+# MangaLiveTranslator 0.1.0
 
-- The translation display now exactly overlays the selected reader region and positions one
-  opaque white English box over each successfully translated OCR polygon.
-- Boxes expand below, above, or horizontally, clamp to the region, avoid collisions where
-  possible, and shrink text only as a fallback.
-- The overlay is frameless, always on top, click-through, and excluded from Windows capture.
-- Existing boxes follow confidently detected vertical scrolling and clear on ambiguous motion or
-  as soon as the next settled scan starts.
-- Fixed an overlay feedback loop by rebasing the first post-render frame and draining clean
-  captures for at least 400 ms after hiding boxes before every automatic or manual OCR scan.
-- Windows display-affinity exclusion now uses typed 64-bit handles, verifies the applied mode,
-  and reports failures without being required for correct scanning.
-- Chinese selections now enforce left-to-right webtoon ordering; right-to-left is Japanese-only.
-- Application-wide start/pause, rescan, copy, clear, and overlay visibility shortcuts.
-- Privacy-safe CPU, memory, latency, display/DPI, failure, and stability diagnostics.
-- Verified model-free PyInstaller workflow, privacy statement, and Page2X release checklist.
-- Selectable Auto, Japanese manga right-to-left, and Webtoon/manhwa reading modes.
-- Geometry-aware grouping with fragment provenance and compatible-script checks.
-- Opt-in vertical Japanese and Chinese crop rotation with confidence-based candidate selection.
-- Project-created layout fixtures and an offline quality-gate benchmark.
+This is the first public release of MangaLiveTranslator, an offline Windows application that
+recognizes Japanese and Chinese text in a selected manga, manhwa, or manhua reader region and
+places English translations directly over the source text.
 
-- Independent manga-only package derived from VideoLiveTranslator.
-- DPI-aware multi-monitor reader-region selection and preview.
-- Persistent Start/Pause runtime with immediate manual rescanning and Clear controls.
-- Continuous 5 FPS viewport monitoring with motion detection and a 400 ms settle interval.
-- Generation-aware latest-only inference that prevents obsolete results from changing the UI.
-- Normalized-text translation caching and geometry-aware duplicate suppression across scrolling.
-- Stable-ID reconciliation updates retained overlay boxes without displaying obsolete blocks.
-- Horizontal multi-block Japanese, Simplified Chinese, and Traditional Chinese OCR with
-  deterministic top-to-bottom/left-to-right ordering and offline English translation.
-- Block-local translation errors that do not discard successful results from the viewport.
-- Backward-compatible migration of Phase 0's generic Chinese setting.
-- External, preflight-verified RapidOCR and CTranslate2 models.
-- Audio capture, VAD, Whisper, and hybrid modes are intentionally absent.
+## Highlights
+
+- Local Japanese, Simplified Chinese, and Traditional Chinese OCR and English translation.
+- Coordinate-aligned white translation boxes centered over detected source text.
+- Symmetric box expansion, text wrapping, edge clamping, collision avoidance, and font fallback.
+- Japanese right-to-left manga ordering and left-to-right webtoon/manhwa ordering.
+- Chinese always uses left-to-right ordering; automatic mode uses right-to-left only when
+  Japanese kana is detected.
+- Automatic rescanning after scrolling settles, with manual rescan support.
+- Live vertical tracking moves visible translations with the page during confident scrolling.
+- Overlay-safe capture prevents displayed translations from triggering rescans or entering OCR.
+- Click-through, always-on-top overlay that supports mixed-DPI and multi-monitor configurations.
+- Adjustable font size and box opacity, copy, clear, pause, and show/hide controls.
+- Privacy-safe diagnostics for capture, OCR, translation, layout, and scroll tracking.
+
+## Downloads
+
+Two archives are required for portable use:
+
+1. `MangaLiveTranslator-0.1.0-portable.zip` contains the Windows application and documentation.
+2. `MangaLiveTranslator-0.1.0-models.zip` contains the external OCR and translation models.
+
+Extract both archives into the same directory. `MangaLiveTranslator.exe` and the `models`
+directory must be immediate siblings. See `HOW_TO_INSTALL.md` inside either archive for complete
+instructions.
+
+The optional `MangaLiveTranslator-0.1.0-setup.exe` provides a per-user Windows installation, but
+the separate model archive is still required. The installer is unsigned, so Windows SmartScreen
+may display a warning.
+
+## Privacy and model distribution
+
+The application performs OCR and translation locally. It does not upload screen captures,
+recognized text, or translations. Model weights are distributed separately to preserve their
+manifests, hashes, licenses, and attribution notices.
+
+## Known limitations
+
+- Translation boxes are based on OCR rectangles rather than speech-bubble contours, so long
+  translations may cover nearby artwork.
+- Vertical OCR remains experimental and is disabled by default.
+- Scroll tracking models vertical movement only; ambiguous or horizontal motion clears boxes.
+- Translation quality and processing speed depend on the supplied models and host CPU.
+- The application and installer are currently unsigned.
+
+## Verification
+
+This release passed 53 automated tests with 91.13% coverage, Ruff checks, strict mypy checks,
+PyInstaller packaging, model preflight, and model-exclusion verification for the application
+archive.
